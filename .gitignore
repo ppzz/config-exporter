@@ -1,0 +1,12 @@
+.idea
+.DS_Store
+
+temp
+resource
+dest
+
+settings.env
+svn.env
+
+settings*.yaml
+
