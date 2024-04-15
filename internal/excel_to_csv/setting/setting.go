@@ -2,7 +2,6 @@ package setting
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/ppzz/golang-csv/internal/helper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -31,10 +30,6 @@ type Setting struct {
 
 func NewSetting() *Setting {
 	return &Setting{}
-}
-
-func (s *Setting) Name() string {
-	return helper.TypeName(s)
 }
 
 func (s *Setting) Init() {
@@ -67,13 +62,4 @@ func (s *Setting) SetAttribute(v *viper.Viper) {
 
 	s.InputExcelDir = v.GetString("excel")
 	s.OutputCsvDir = v.GetString("output")
-}
-
-// ---------------------------------------------------------------------------------------------------------------------
-
-func getNameWithEnv(filename string, e string) string {
-	if e == "" {
-		return filename
-	}
-	return filename + "." + e
 }

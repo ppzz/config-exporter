@@ -43,28 +43,31 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	filename := "csv-gen"
-	fileExt := "yaml"
-	filepath := "."
+
 	envPrefix := "APP"
 	envReplacer := strings.NewReplacer(".", "_")
 
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
+		err := viper.ReadInConfig()
+		cobra.CheckErr(err)
 	} else {
+
+		// filename := "csv-gen"
+		// fileExt := "yaml"
+		// filepath := "."
+
 		// Find home directory.
 		// home, err := os.UserHomeDir()
 		// cobra.CheckErr(err)
 
-		viper.SetConfigName(filename)
-		viper.SetConfigType(fileExt)
-		viper.AddConfigPath(filepath)
+		// viper.SetConfigName(filename)
+		// viper.SetConfigType(fileExt)
+		// viper.AddConfigPath(filepath)
 	}
 	viper.SetEnvPrefix(envPrefix)        // 设置环境变量前缀
 	viper.SetEnvKeyReplacer(envReplacer) // 环境变量的分割符号
 	viper.AutomaticEnv()                 // read in environment variables that match
 
-	err := viper.ReadInConfig()
-	cobra.CheckErr(err)
 }
