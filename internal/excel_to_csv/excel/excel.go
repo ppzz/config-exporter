@@ -3,6 +3,7 @@ package excel
 import (
 	"github.com/samber/lo"
 	"github.com/tealeg/xlsx"
+	"log"
 	"strings"
 )
 
@@ -30,10 +31,12 @@ func NewSheet(sheetIndex int, sheet *xlsx.Sheet) *Sheet {
 		})
 	})
 
-	_, dataGrid := SplitGrid(tempGrid, MetaDataRowCount) // tempGrid 拆成两部分
-	dataGrid = RemoveEmptyRow(tempGrid)                  // 删除空行
-	columnCount := GetColumnCount(tempGrid)              // 计算有效列
-	tempGrid = Tailor(columnCount, tempGrid)             // 裁剪多余的列，并补足不够的列
+	// _, dataGrid := SplitGrid(tempGrid, MetaDataRowCount) // tempGrid 拆成两部分
+	tempGrid = RemoveEmptyRow(tempGrid) // 删除空行
+	// columnCount := GetColumnCount(tempGrid)              // 计算有效列
+	// tempGrid = Tailor(columnCount, tempGrid)             // 裁剪多余的列，并补足不够的列
+	tempGrid = fillCol(tempGrid, sheet.MaxCol) // 填充列
+	tempGrid = RemoveEmptyCol(tempGrid)        // 删除空行
 
 	return &Sheet{
 		Index:          sheetIndex,
@@ -41,9 +44,24 @@ func NewSheet(sheetIndex int, sheet *xlsx.Sheet) *Sheet {
 		OriginalMaxRow: sheet.MaxRow,
 		OriginalMaxCol: sheet.MaxCol,
 		RowCount:       len(tempGrid),
-		ColCount:       columnCount,
-		Grid:           dataGrid,
+		ColCount:       len(tempGrid[0]),
+		Grid:           tempGrid,
 	}
+}
+
+func fillCol(grid [][]string, colCount int) [][]string {
+	result := make([][]string, len(grid))
+	for i, row := range grid {
+		if len(row) > colCount {
+			log.Fatal("Error: row len >= col")
+		}
+
+		for len(row) < colCount {
+			row = append(row, "")
+		}
+		result[i] = row
+	}
+	return result
 }
 
 // ColumnMeta column 的描述信息

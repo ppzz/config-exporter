@@ -60,6 +60,29 @@ func RemoveEmptyRow(grid [][]string) [][]string {
 	})
 }
 
+// RemoveEmptyCol 删除空列
+func RemoveEmptyCol(grid [][]string) [][]string {
+	validCol := make([]bool, len(grid[0]))
+
+	for _, row := range grid {
+		for i, cell := range row {
+			if len(strings.TrimSpace(cell)) > 0 {
+				validCol[i] = true
+			}
+		}
+	}
+
+	return lo.Map(grid, func(row []string, index int) []string {
+		var newRow []string
+		for i, cell := range row {
+			if validCol[i] {
+				newRow = append(newRow, cell)
+			}
+		}
+		return newRow
+	})
+}
+
 func IsAllEmpty(row []string) bool {
 	return lo.EveryBy(row, func(item string) bool {
 		return len(strings.TrimSpace(item)) == 0
