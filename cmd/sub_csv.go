@@ -19,9 +19,9 @@ var csvCmd = &cobra.Command{
 }
 
 func prepareSetting(cmd *cobra.Command) {
-	err := viper.BindPFlag("excel", cmd.PersistentFlags().Lookup("excel"))
+	err := viper.BindPFlag("excel", cmd.Flags().Lookup("excel"))
 	cobra.CheckErr(err)
-	err = viper.BindPFlag("csv", cmd.PersistentFlags().Lookup("csv"))
+	err = viper.BindPFlag("csv", cmd.Flags().Lookup("csv"))
 	cobra.CheckErr(err)
 	setting.Get().Init()
 }
@@ -30,6 +30,6 @@ func init() {
 	rootCmd.AddCommand(csvCmd)
 
 	// rootCmd.MarkPersistentFlagRequired("excel") // Optional: makes the excel flag required
-	csvCmd.PersistentFlags().StringP("excel", "e", "", "specify the excel file path")
-	csvCmd.PersistentFlags().StringP("csv", "c", "", "specify the csv file path")
+	csvCmd.Flags().StringP("excel", "e", "", "specify the excel file path")
+	csvCmd.Flags().StringP("csv", "c", "", "specify the csv file path")
 }
