@@ -13,12 +13,12 @@ var csvCmd = &cobra.Command{
 	Short: "生成 csv 文件",
 	Long:  `根据输入的 Excel 文件生成 csv 文件`,
 	Run: func(cmd *cobra.Command, args []string) {
-		prepareSetting(cmd)
+		csvCmdPrepareSetting(cmd)
 		starter.Start()
 	},
 }
 
-func prepareSetting(cmd *cobra.Command) {
+func csvCmdPrepareSetting(cmd *cobra.Command) {
 	err := viper.BindPFlag("excel", cmd.Flags().Lookup("excel"))
 	cobra.CheckErr(err)
 	err = viper.BindPFlag("csv", cmd.Flags().Lookup("csv"))
@@ -29,7 +29,6 @@ func prepareSetting(cmd *cobra.Command) {
 func init() {
 	rootCmd.AddCommand(csvCmd)
 
-	// rootCmd.MarkPersistentFlagRequired("excel") // Optional: makes the excel flag required
 	csvCmd.Flags().StringP("excel", "e", "", "specify the excel file path")
 	csvCmd.Flags().StringP("csv", "c", "", "specify the csv file path")
 }

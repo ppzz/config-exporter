@@ -2,6 +2,7 @@ package excel
 
 import (
 	"encoding/csv"
+	"github.com/ppzz/golang-csv/internal/helper"
 	"github.com/samber/lo"
 	"github.com/tealeg/xlsx"
 	"log"
@@ -58,17 +59,15 @@ var withBOM bool // Byte Order Mark ， 字节顺序标记， 用来标明这个
 
 // ExportToCsv 输出csv文件
 func (h ExcelHandler) ExportToCsv(dir string, excel *Excel) {
-	makeSureExist(dir)
-	basename := path.Base(excel.FilePath)
-	bareName := strings.TrimSuffix(basename, path.Ext(basename))
-
+	helper.MakeSureExist(dir)
+	bareName := helper.FileBareName(excel.FilePath)
 	for _, sheet := range excel.Sheets {
 		saveCsv(dir, bareName, sheet)
 	}
 }
 
 func saveCsv(dir string, bareName string, sheet *Sheet) {
-	csvPath := path.Join(dir, strings.ToLower(bareName)+"."+strconv.Itoa(sheet.Index)+"."+strings.ToLower(sheet.Name)+".csv")
+	csvPath := path.Join(dir, bareName+"."+strconv.Itoa(sheet.Index)+"."+strings.ToLower(sheet.Name)+".csv")
 	file, err := os.OpenFile(csvPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0664)
 	if err != nil {
 		log.Fatal("open file failed: ", csvPath, err.Error())
@@ -90,18 +89,6 @@ func saveCsv(dir string, bareName string, sheet *Sheet) {
 			log.Fatal("write csv failed: ", csvPath, err.Error())
 		}
 		writer.Flush()
-	}
-}
-
-func makeSureExist(dir string) {
-	// 判断目录是否存在
-	exist := IsExist(dir)
-	if exist {
-		return
-	}
-	err := os.MkdirAll(dir, 0755)
-	if err != nil {
-		panic(err)
 	}
 }
 
