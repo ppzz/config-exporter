@@ -23,8 +23,8 @@ type Setting struct {
 	LogOutput   []string `validate:"required,min=1"`
 	LogLevel    string   `validate:"required,oneof=debug info warn error dpanic panic fatal"`
 
-	InputExcelDir string `validate:"required,dirpath"` // 输入的 Excel 文件夹
-	OutputCsvDir  string `validate:"required,dirpath"` // 输出的 Csv 文件夹
+	InputExcelDir string `validate:"required"` // 输入的 Excel 文件夹
+	OutputCsvDir  string `validate:"required"` // 输出的 Csv 文件夹
 	// OutputCsvMetaDir string `validate:"required,dir"` // 输出的 Csv Meta 文件夹
 }
 
@@ -61,5 +61,5 @@ func (s *Setting) SetAttribute(v *viper.Viper) {
 	s.LogOutput = v.GetStringSlice("log.output")
 
 	s.InputExcelDir = v.GetString("excel")
-	s.OutputCsvDir = v.GetString("output")
+	s.OutputCsvDir = v.GetString("csv")
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"path"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -47,27 +48,34 @@ func initConfig() {
 	envPrefix := "APP"
 	envReplacer := strings.NewReplacer(".", "_")
 
+	defCfgName := "csv-gen"
+	defCfgExt := "yaml"
+	defCfgDir := "."
+
+	filePath := path.Join(defCfgDir, defCfgName+"."+defCfgExt)
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 		err := viper.ReadInConfig()
 		cobra.CheckErr(err)
-	} else {
-
-		// filename := "csv-gen"
-		// fileExt := "yaml"
-		// filepath := "."
-
+	} else if ExistFile(filePath) {
 		// Find home directory.
 		// home, err := os.UserHomeDir()
 		// cobra.CheckErr(err)
-
-		// viper.SetConfigName(filename)
-		// viper.SetConfigType(fileExt)
-		// viper.AddConfigPath(filepath)
+		viper.SetConfigName(defCfgName)
+		viper.SetConfigType(defCfgExt)
+		viper.AddConfigPath(defCfgDir)
+		err := viper.ReadInConfig()
+		cobra.CheckErr(err)
 	}
 	viper.SetEnvPrefix(envPrefix)        // 设置环境变量前缀
 	viper.SetEnvKeyReplacer(envReplacer) // 环境变量的分割符号
 	viper.AutomaticEnv()                 // read in environment variables that match
 
+}
+
+// ExistFile returns true if a file or directory exists.
+func ExistFile(name string) bool {
+	info, err := os.Stat(name)
+	return err == nil && info != nil && !info.IsDir()
 }
