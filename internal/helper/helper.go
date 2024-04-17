@@ -49,6 +49,40 @@ func MakeSureExist(dir string) {
 	}
 }
 
+func DirMustEmpty(dir string) {
+	// 使用Stat获取文件或目录的信息
+	fileInfo, err := os.Stat(dir)
+	if os.IsNotExist(err) {
+		return
+	}
+	if err != nil {
+		log.Fatal("stat failed, dir: ", dir, err.Error())
+	}
+
+	// 检查是否为目录
+	if !fileInfo.IsDir() {
+		log.Fatal("not a dir: ", dir)
+	}
+
+	// 打开目录
+	opened, err := os.Open(dir)
+	if err != nil {
+		log.Fatal("open dir failed, dir: ", dir, err.Error())
+	}
+	defer opened.Close()
+
+	// 读取目录内容
+	_, err = opened.Readdirnames(1) // 尝试读取至少一个条目
+	if errors.Is(err, io.EOF) || errors.Is(err, os.ErrNotExist) {
+		return
+	}
+	if err != nil {
+		log.Fatal("read dir failed, dir: ", dir, err.Error())
+	}
+
+	log.Fatal("dir not empty: ", dir)
+}
+
 // IsEmptyDir 检查指定的路径是否是一个空目录
 func IsEmptyDir(path string) bool {
 

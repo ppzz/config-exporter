@@ -1,0 +1,10 @@
+package config
+
+func AllNormalConfig() []Storable {
+	list := []Storable{
+	    {{- range .List}}
+		All{{ . }},
+		{{- end }}
+	}
+	return list
+}

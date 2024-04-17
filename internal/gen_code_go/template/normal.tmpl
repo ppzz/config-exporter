@@ -1,0 +1,55 @@
+package config
+
+// Important: 此文件为自动生成的代码，请不要提交
+// Important: 本文件用户映射配置文件csv的字段，仅用与csv的数据持有对象
+
+// {{.CsvMetaVarName}} 保存一些从csv文件读取过来的元信息
+var {{.CsvMetaVarName}} = CsvMeta{
+    Filename:        "{{.CsvFileBareName}}",
+    FilePath:        "{{.CsvFileFullPath}}",
+    DataRowCount:    {{.CsvDataRowCount}},
+    DataColumnCount: {{.CsvDataColumnCount}},
+}
+
+// csv 配置集合，外部可以通过这个实例引用到所有的配置项目
+var All{{.ClassName}} = &{{.ManagerClassName}}{}
+
+// --- 以下是对 csv 文件中的列的抽象，csv 中的每行可以看作是一个抽象对象
+
+// -----------------------------------------------------------------------------
+
+// {{.ClassName}} {{.CsvFileBareName}}
+type {{.ClassName}} struct {
+{{- range .Fields}}
+    {{.GoFieldName}} {{.ColTyp}} `column:"{{.ColName}}"` // {{.ColIndex}} {{.ColDesc}}
+{{- end }}
+}
+
+func (a {{.ClassName}}) ID() int {
+    return a.Id
+}
+
+// -----------------------------------------------------------------------------
+
+// --- 以下对象代表一组csv配置的集合，
+
+type {{.ManagerClassName}} struct {
+    CfgBase[{{.ClassName}}]
+}
+
+func (a *{{.ManagerClassName}}) GenEmptyInstance() IDable {
+    return new({{.ClassName}})
+}
+
+func (a *{{.ManagerClassName}}) InsertInstance(item IDable) {
+    temp := item.(*{{.ClassName}})
+    a.CfgBase.InsertOne(*temp)
+}
+
+func (a *{{.ManagerClassName}}) GetMetadata() CsvMeta {
+    return {{.CsvMetaVarName}}
+}
+
+func (a *{{.ManagerClassName}}) GetAll() []{{.ClassName}} {
+    return a.CfgBase.All()
+}

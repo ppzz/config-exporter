@@ -1,0 +1,18 @@
+package config
+
+// Important: 此文件为自动生成的代码，请不要提交
+// Important: 本文件用户映射配置文件csv的字段，仅用与csv的数据持有对象
+
+// {{.CsvMetaVarName}} 保存一些从csv文件读取过来的元信息
+var {{.CsvMetaVarName}} = CsvMeta{
+	Filename:        "{{.CsvFileBareName}}",
+	FilePath:        "{{.CsvFileFullPath}}",
+	DataRowCount:    {{.CsvDataRowCount}},
+	DataColumnCount: {{.CsvDataColumnCount}},
+}
+
+// --- 以下是对 csv 文件中的行的描述，每行看作是一个变量
+
+{{- range .Variables }}
+var {{.VariableName}} = {{.VariableValue}} // {{.ColIndex}} {{.OriginalName}}, {{.OriginalType}}, {{.OriginalVal}}, {{.OriginalDesc}}
+{{- end }}

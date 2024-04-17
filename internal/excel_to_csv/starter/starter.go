@@ -1,9 +1,9 @@
 package starter
 
 import (
-	"github.com/ppzz/golang-csv/internal/excel_to_csv/excel"
 	"github.com/ppzz/golang-csv/internal/excel_to_csv/setting"
 	"github.com/ppzz/golang-csv/internal/helper"
+	"github.com/ppzz/golang-csv/internal/lib/excel"
 	"github.com/samber/lo"
 	"log"
 	"path"
@@ -29,6 +29,9 @@ func Start() {
 		}
 		return ex
 	})
+
+	helper.DirMustEmpty(csvDir)
+	helper.MakeSureExist(csvDir)
 
 	// 导出csv
 	for _, item := range excelList {

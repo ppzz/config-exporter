@@ -1,0 +1,24 @@
+config:
+  name: "{{.ConfigName}}"
+  config_category: "{{.ConfigCate}}"
+  excel_name: "{{.ExcelName}}"
+  desc: "{{.ExcelDesc}}"
+  file_size: {{.ExcelFilesize}}
+  data_row_count: {{.ExcelDataRowCount}}
+  data_col_count: {{.ExcelDataColCount}}
+  field:
+    {{- range .Field }}
+    - name: {{.Name}}   # {{ .Index }}; {{.Typ}}; {{.Flag}};  {{.Desc}}
+      {{- /*
+      column_index: {{ .Index }}
+      desc: {{.Desc}}
+      type: {{.Typ}}
+      flag: {{.Flag}}
+      first_val: "{{.FirstVal}}"
+      shortest_val: "{{.ShortestVal}}"
+      longest_val: "{{.LongestVal}}"
+      */}}
+      comment: {{.Comment}}
+      note: {{.Note}}
+      {{if false}}{{end}}
+    {{- end }}

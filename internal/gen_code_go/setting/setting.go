@@ -6,8 +6,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ConstExcelExtNames = []string{".xlsx", ".xls"} // excel 文件后缀
-
 var instance = NewSetting()
 
 func Get() *Setting {
@@ -17,10 +15,8 @@ func Get() *Setting {
 // ---------------------------------------------------------------------------------------------------------------------
 
 type Setting struct {
-	InputCsvDir  string `validate:"required"` // 输出的 Csv 文件夹
-	OutputFmtDir string `validate:"required"` // 输入的 Excel 文件夹
-
-	CsvFileNameSchema string `validate:"required"` // csv 文件名的正则表达式
+	InputFmtCsvDir  string `validate:"required"` // 输出的 Csv 文件夹
+	OutputCodeGoDir string `validate:"required"` // 输入的 Excel 文件夹
 }
 
 func NewSetting() *Setting {
@@ -39,7 +35,6 @@ func (s *Setting) Init() {
 func (s *Setting) SetAttribute(v *viper.Viper) {
 	v.SetDefault("csv_filename_schema", `^\w+\.\d+\.\w+\.csv$`)
 
-	s.InputCsvDir = v.GetString("csv")
-	s.OutputFmtDir = v.GetString("fmtcsv")
-	s.CsvFileNameSchema = v.GetString("csv_filename_schema")
+	s.InputFmtCsvDir = v.GetString("fmtcsv")
+	s.OutputCodeGoDir = v.GetString("code_go")
 }

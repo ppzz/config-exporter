@@ -10,7 +10,7 @@ import (
 
 // formatCmd represents the format command
 var formatCmd = &cobra.Command{
-	Use:   "fmt",
+	Use:   "fmtcsv",
 	Short: "csv 文件格式化处理",
 	Long:  `根据文件名, 文件内容等信息对 csv 文件进行格式化处理`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -22,7 +22,7 @@ var formatCmd = &cobra.Command{
 func formatCmdPrepareSetting(cmd *cobra.Command) {
 	err := viper.BindPFlag("csv", cmd.Flags().Lookup("csv"))
 	cobra.CheckErr(err)
-	err = viper.BindPFlag("fmt", cmd.Flags().Lookup("fmt"))
+	err = viper.BindPFlag("fmtcsv", cmd.Flags().Lookup("fmtcsv"))
 	cobra.CheckErr(err)
 	setting.Get().Init()
 }
@@ -30,5 +30,5 @@ func formatCmdPrepareSetting(cmd *cobra.Command) {
 func init() {
 	rootCmd.AddCommand(formatCmd)
 	formatCmd.Flags().StringP("csv", "c", "", "specify the csv file path")
-	formatCmd.Flags().StringP("fmt", "f", "", "specify the formatted csv file path")
+	formatCmd.Flags().StringP("fmtcsv", "f", "", "specify the formatted csv file path")
 }

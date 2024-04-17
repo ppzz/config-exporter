@@ -9,49 +9,49 @@ import (
 
 // 配置表类型
 const (
-	TypInvalid Typ = iota // 占位
-	TypGlobal             // 枚举配置表
-	TypNormal             // 普通配置表
-	TypI18n               // 多语言配置表
+	ConfigTypInvalid ConfigTyp = iota // 占位
+	ConfigTypGlobal                   // 枚举配置表
+	ConfigTypNormal                   // 普通配置表
+	ConfigTypI18n                     // 多语言配置表
 )
 
-type Typ int
+type ConfigTyp int
 
-func (t Typ) String() string {
+func (t ConfigTyp) String() string {
 	switch t {
-	case TypGlobal:
+	case ConfigTypGlobal:
 		return "global"
-	case TypNormal:
+	case ConfigTypNormal:
 		return "normal"
-	case TypI18n:
+	case ConfigTypI18n:
 		return "i18n"
 	default:
 		return "invalid"
 	}
 }
 
-var TypGlobalNameMatcher = regexp.MustCompile("global_.+$")    // global
-var TypI18nNameMatcher = regexp.MustCompile(`i18n_.+$`)        // i18n表
-var TypNormalNameMatcher = regexp.MustCompile("[a-z0-9]+_.+$") // 普通表
+var TypGlobalNameMatcher = regexp.MustCompile("^global$")      // global
+var TypI18nNameMatcher = regexp.MustCompile(`^i18n.*$`)        // i18n表
+var TypNormalNameMatcher = regexp.MustCompile("^[a-z0-9]+.*$") // 普通表
 
 // GetConfType 获取配置文件的类型
-func GetConfType(filename string) (typ Typ) {
-	lower := strings.ToLower(FileBareName(filename))
+func GetConfType(bareName string) (typ ConfigTyp) {
+	lower := strings.ToLower(bareName)
 
 	// global
 	if TypGlobalNameMatcher.MatchString(lower) {
-		return TypGlobal
+		return ConfigTypGlobal
 	}
 	// i18n表
 	if TypI18nNameMatcher.MatchString(lower) {
-		return TypI18n
+		return ConfigTypI18n
 	}
 	// 普通表
 	if TypNormalNameMatcher.MatchString(lower) {
-		return TypNormal
+		return ConfigTypNormal
 	}
 
-	return TypInvalid
+	return ConfigTypInvalid
 }
 
 // FilenameByType 返回文件名
@@ -59,14 +59,14 @@ func FilenameByType(bareName string) string {
 	bareName = strings.Split(bareName, ".")[0]
 	typ := GetConfType(bareName)
 	switch typ {
-	case TypGlobal, TypNormal: // 下划线之前的内容
+	case ConfigTypGlobal, ConfigTypNormal: // 下划线之前的内容
 		idx := strings.Index(bareName, "_")
 		if idx == -1 {
 			return bareName
 		}
 		return bareName[:idx]
 
-	case TypI18n: // 去掉下划线
+	case ConfigTypI18n: // 去掉下划线
 		return strings.ReplaceAll(bareName, "_", "")
 	default:
 		log.Fatal("invalid config file type: ", bareName)
@@ -85,4 +85,30 @@ func CamelCaseToSnakeCase(s string) string {
 		result = append(result, unicode.ToLower(r))
 	}
 	return string(result)
+}
+
+// SnakeToCamel converts snake_case strings to camelCase.
+func SnakeToCamel(s string) string {
+	s = regexp.MustCompile(`\p{Han}`).ReplaceAllString(s, "") // 去掉中文
+	s = strings.ToLower(s)
+
+	words := strings.Split(s, "_")
+	for i := range words {
+		if i > 0 && len(words[i]) > 0 {
+			words[i] = strings.ToUpper(words[i][:1]) + words[i][1:]
+		} else {
+			words[i] = strings.ToLower(words[i])
+		}
+	}
+	return strings.Join(words, "")
+}
+
+func UpperFirstLetter(name string) string {
+	inputRunes := []rune(name) // 将字符串转换为 Rune 数组
+
+	// 如果字符串非空且首字母是大写字母，则将首字母转换为小写字母
+	if len(inputRunes) > 0 && unicode.IsLower(inputRunes[0]) {
+		inputRunes[0] = unicode.ToUpper(inputRunes[0])
+	}
+	return string(inputRunes)
 }

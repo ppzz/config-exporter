@@ -59,7 +59,6 @@ var withBOM bool // Byte Order Mark ， 字节顺序标记， 用来标明这个
 
 // ExportToCsv 输出csv文件
 func (h ExcelHandler) ExportToCsv(dir string, excel *Excel) {
-	helper.MakeSureExist(dir)
 	bareName := helper.FileBareName(excel.FilePath)
 	for _, sheet := range excel.Sheets {
 		saveCsv(dir, bareName, sheet)

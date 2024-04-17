@@ -1,8 +1,11 @@
 package helper
 
 import (
+	"bytes"
 	"github.com/samber/lo"
 	"log"
+	"strings"
+	"text/template"
 )
 
 const TypeB = "bool"
@@ -67,4 +70,45 @@ func FormatTypeName(typeName string) string {
 	}
 	log.Fatal("Error: invalid type name: ", typeName)
 	return typeName
+}
+
+func GetVariableLiteralValue(typ string, val string) string {
+	switch typ {
+	case TypeI:
+		return GoLiteralValInt(val)
+	case TypeIArr:
+		return GoLiteralValIntArr(val)
+	case TypeIArr2d:
+		return "NOT IMPLEMENT"
+	case TypeStr:
+		return GoLiteralValStr(val)
+	case TypeStrArr:
+		return "NOT IMPLEMENT"
+	case TypeStrArr2d:
+		return "NOT IMPLEMENT"
+	}
+	return ""
+}
+
+func GoLiteralValIntArr(val string) string {
+	tmp := `[]int{ {{- . -}} }`
+	tmpl, err := template.New("").Parse(tmp)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	b := bytes.Buffer{}
+	err = tmpl.Execute(&b, strings.ReplaceAll(val, "#", ", "))
+	if err != nil {
+		return ""
+	}
+	return b.String()
+}
+
+func GoLiteralValInt(val string) string {
+	return val
+}
+
+func GoLiteralValStr(val string) string {
+	return `"` + val + `"`
 }

@@ -16,6 +16,16 @@ type ConfigCsv struct {
 	Grid           [][]string // csv data grid
 }
 
+func (c *ConfigCsv) ToGrid() [][]string {
+	headerGrid := [][]string{
+		c.HeaderLineName,
+		c.HeaderLineDesc,
+		c.HeaderLineType,
+		c.HeaderLineFlag,
+	}
+	return append(headerGrid, c.Grid...)
+}
+
 func CreateConfigCsv(item *Csv) *ConfigCsv {
 	//  0. csv 文件过滤
 	// - 按照cs标记过滤列
@@ -52,6 +62,11 @@ func CreateConfigCsv(item *Csv) *ConfigCsv {
 	// typeColValid := isValidType(headerGrid[HeaderLineTypeRowIndex]) // 判断列是否有效(至少要包含一个值)
 	// dataGrid = helper.GridFilterColumn(dataGrid, typeColValid)      // 删去type不符合的列
 	// headerGrid = helper.GridFilterColumn(headerGrid, typeColValid)  // 删去type不符合的列
+
+	dataGrid = helper.GridOmitEmptyRow(dataGrid) // 删除空行
+	if len(dataGrid) == 0 {
+		return nil
+	}
 
 	// type 映射到通用的 type , 找不到匹配的项会报错
 	headerGrid[HeaderLineTypeRowIndex] = fmtTypeName(headerGrid[HeaderLineTypeRowIndex])
