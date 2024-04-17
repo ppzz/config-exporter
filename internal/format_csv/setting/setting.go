@@ -37,7 +37,7 @@ func (s *Setting) Init() {
 }
 
 func (s *Setting) SetAttribute(v *viper.Viper) {
-	v.SetDefault("csv_filename_schema", `^\w+\.\d+\.\w+\.csv$`)
+	v.SetDefault("csv_filename_schema", `^.+\.0+\..+\.csv$`)
 
 	s.InputCsvDir = v.GetString("csv")
 	s.OutputFmtDir = v.GetString("fmtcsv")
