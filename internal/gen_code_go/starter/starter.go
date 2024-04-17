@@ -1,13 +1,19 @@
 package starter
 
 import (
+	"embed"
 	"github.com/ppzz/config-exporter/internal/gen_code_go/gen"
 	"github.com/ppzz/config-exporter/internal/gen_code_go/setting"
 	"github.com/ppzz/config-exporter/internal/helper"
 	"github.com/ppzz/config-exporter/internal/lib/csver"
 	"github.com/samber/lo"
+	"github.com/spf13/cobra"
 	"path"
+	"text/template"
 )
+
+//go:embed template
+var tmplFs embed.FS
 
 func Start() {
 	csvDir := setting.Get().InputFmtCsvDir
@@ -54,12 +60,12 @@ func exportGlobalGoFile(codeDir string, csv *csver.ConfigCsv) {
 	bareName := helper.FileBareName(csv.Csv.FilePath)
 	goFilePath := path.Join(codeDir, "a_"+helper.CamelCaseToSnakeCase(bareName)+".autogen.go")
 
-	templateDir := "internal/gen_code_go/template"
-	TemplatePath := path.Join(templateDir, "global.tmpl")
+	tmpl, err := template.ParseFS(tmplFs, "template/global.tmpl")
+	cobra.CheckErr(err)
 
 	param := gen.CreateParamGoGlobal(csv)
-	helper.RenderTemplate(goFilePath, TemplatePath, param)
 
+	helper.RenderTemplate(goFilePath, tmpl, param)
 }
 
 // exportNormalGoFile 导出普通的go文件
@@ -67,19 +73,15 @@ func exportNormalGoFile(codeDir string, csv *csver.ConfigCsv) {
 	bareName := helper.FileBareName(csv.Csv.FilePath)
 	goFilePath := path.Join(codeDir, helper.CamelCaseToSnakeCase(bareName)+".autogen.go")
 
-	templateDir := "internal/gen_code_go/template"
-	TemplatePath := path.Join(templateDir, "normal.tmpl")
+	tmpl, err := template.ParseFS(tmplFs, "template/normal.tmpl")
+	cobra.CheckErr(err)
 
 	param := gen.CrateParamGoNormal(csv)
-	helper.RenderTemplate(goFilePath, TemplatePath, param)
+	helper.RenderTemplate(goFilePath, tmpl, param)
 }
 
 func exportNormalIndexGoFile(codeDir string, list []*csver.ConfigCsv) {
 	goFilePath := path.Join(codeDir, "a_index.autogen.go")
-
-	templateDir := "internal/gen_code_go/template"
-	TemplatePath := path.Join(templateDir, "normal_index.tmpl")
-
 	classNameList := lo.Map(list, func(item *csver.ConfigCsv, index int) string {
 		csvFilePath := item.Csv.FilePath
 		bareName := helper.FileBareName(csvFilePath)
@@ -87,6 +89,10 @@ func exportNormalIndexGoFile(codeDir string, list []*csver.ConfigCsv) {
 		camelCaseName := helper.SnakeToCamel(snakeCaseName)
 		return helper.UpperFirstLetter(camelCaseName)
 	})
+
+	tmpl, err := template.ParseFS(tmplFs, "template/normal_index.tmpl")
+	cobra.CheckErr(err)
+
 	param := map[string]any{"List": classNameList}
-	helper.RenderTemplate(goFilePath, TemplatePath, param)
+	helper.RenderTemplate(goFilePath, tmpl, param)
 }
