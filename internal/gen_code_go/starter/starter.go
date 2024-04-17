@@ -9,6 +9,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	"path"
+	"sort"
 	"text/template"
 )
 
@@ -93,6 +94,7 @@ func exportNormalIndexGoFile(codeDir string, list []*csver.ConfigCsv) {
 	tmpl, err := template.ParseFS(tmplFs, "template/normal_index.tmpl")
 	cobra.CheckErr(err)
 
+	sort.Strings(classNameList)
 	param := map[string]any{"List": classNameList}
 	helper.RenderTemplate(goFilePath, tmpl, param)
 }
