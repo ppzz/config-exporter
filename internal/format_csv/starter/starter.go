@@ -37,7 +37,7 @@ func Start() {
 	helper.MakeSureExist(fmtDir)
 	lo.ForEach(configCsvList, func(item *csver.ConfigCsv, index int) {
 		bareName := helper.FileBareName(item.Csv.FilePath)
-		bareName = helper.CamelCaseToSnakeCase(helper.FilenameByType(bareName))
+		bareName = helper.CamelCaseToSnakeCase(helper.FilenameByType(bareName)) // 需要跟后面 config 文件中记录的 csv 文件名一致
 		fmtCsvFilePath := path.Join(fmtDir, bareName+".csv")
 		helper.FileCsvWrite(fmtCsvFilePath, item.ToGrid())
 	})

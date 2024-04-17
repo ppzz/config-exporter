@@ -33,8 +33,9 @@ func CrateParamGoNormal(csv *csver.ConfigCsv) *ParamGoNormal {
 	camelCaseName := helper.SnakeToCamel(snakeCaseName)
 	className := helper.UpperFirstLetter(camelCaseName)
 
+	csvFileBareName := helper.CamelCaseToSnakeCase(helper.FilenameByType(bareName)) // 需要跟 fmtcsv 输出的文件名保持一致
 	param := &ParamGoNormal{
-		CsvFileBareName:    bareName,
+		CsvFileBareName:    csvFileBareName + ".csv",
 		CsvFileFullPath:    csvFilePath,
 		CsvDataRowCount:    len(csv.Grid),
 		CsvDataColumnCount: len(csv.Grid[0]),
