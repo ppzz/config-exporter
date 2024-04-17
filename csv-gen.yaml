@@ -1,6 +1,6 @@
 excel: dest/excel
 csv: dest/csv
 fmtcsv: dest/fmtcsv
-code_go: dest/code_go
+go: dest/code_go
 
 csv_filename_schema: ^.+\.0+\..+\.csv$

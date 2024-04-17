@@ -10,7 +10,7 @@ import (
 
 // codeGoCmd represents the code command
 var codeGoCmd = &cobra.Command{
-	Use:   "code_go",
+	Use:   "go",
 	Short: "gen code",
 	Long:  `gen go code via csv file`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -22,7 +22,7 @@ var codeGoCmd = &cobra.Command{
 func goCmdPrepareSetting(cmd *cobra.Command) {
 	err := viper.BindPFlag("fmtcsv", cmd.Flags().Lookup("fmtcsv"))
 	cobra.CheckErr(err)
-	err = viper.BindPFlag("code_go", cmd.Flags().Lookup("go"))
+	err = viper.BindPFlag("go", cmd.Flags().Lookup("go"))
 	cobra.CheckErr(err)
 	setting.Get().Init()
 }
