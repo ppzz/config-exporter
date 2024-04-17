@@ -18,57 +18,36 @@ func Start() {
 		return path.Join(csvDir, item)
 	})
 
-	// fmt.Println("")
-	// for i, item := range csvFilenameList {
-	// 	fmt.Println(i, item)
-	// }
-	// fmt.Println("")
-
+	// 读取csv文件, 返回一组 ConfigCsv 对象
 	csvList := lo.Map(csvFilenameList, func(item string, index int) *csver.ConfigCsv {
 		grid := helper.FileCsvRead(item)
-		return csver.CreateConfigCsv(csver.NewCsv(item, grid))
+		csv := csver.NewCsv(item, grid)
+		return csver.CreateConfigCsv(csv)
 	})
-
-	// fmt.Println("")
-	// for i, item := range csvList {
-	// 	fmt.Println(i, item == nil)
-	// }
-	// fmt.Println("")
 
 	// 分类,normal, global
 	typ2List := lo.GroupBy(csvList, func(item *csver.ConfigCsv) helper.ConfigTyp {
 		return helper.GetConfType(helper.FileBareName(item.Csv.FilePath))
 	})
 
-	normalCsvList := typ2List[helper.ConfigTypNormal]
-	globalCsvList := typ2List[helper.ConfigTypGlobal]
+	normalCsvList := typ2List[helper.ConfigTypNormal] // 普通配置
+	globalCsvList := typ2List[helper.ConfigTypGlobal] // 全局配置
 
 	helper.DirMustEmpty(codeDir)
 	helper.MakeSureExist(codeDir)
 
-	// go normal
+	// go normal config
 	lo.ForEach(normalCsvList, func(item *csver.ConfigCsv, index int) {
 		exportNormalGoFile(codeDir, item)
 	})
 
-	// go config
+	// go global config
 	lo.ForEach(globalCsvList, func(item *csver.ConfigCsv, index int) {
 		exportGlobalGoFile(codeDir, item)
 	})
 
-	// go normal index
+	// go normal index config
 	exportNormalIndexGoFile(codeDir, normalCsvList)
-
-	// config index
-
-	// globalCsvList := typ2List[helper.ConfigTypGlobal]
-
-	//  0. csv 文件过滤
-	// - 按照cs标记过滤列
-	// - 按照 type 过滤列, 如果有不符合的列，报错
-	// - type 映射到通用的 type
-	// - name 补全,格式化
-	// header line: name, type, desc, c-s-flag
 }
 
 func exportGlobalGoFile(codeDir string, csv *csver.ConfigCsv) {

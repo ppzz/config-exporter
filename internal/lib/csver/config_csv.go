@@ -27,11 +27,11 @@ func (c *ConfigCsv) ToGrid() [][]string {
 }
 
 func CreateConfigCsv(item *Csv) *ConfigCsv {
-	//  0. csv 文件过滤
-	// - 按照cs标记过滤列
-	// - 按照 type 过滤列, 如果有不符合的列，报错
+	// - csv 文件名过滤
+	// - 按照 cs 标记过滤列
+	// - 按照 type 检查, 如果有不符合的列，报错
 	// - type 映射到通用的 type
-	// - name 补全,格式化
+	// - name 补全, 格式化
 
 	const HeaderLineCount = 4        // header 行数
 	const HeaderLineNameRowIndex = 0 // header 行索引 name
@@ -57,12 +57,6 @@ func CreateConfigCsv(item *Csv) *ConfigCsv {
 	dataGrid = helper.GridFilterColumn(dataGrid, flagColValid)        // 删去非 s 列
 	headerGrid = helper.GridFilterColumn(headerGrid, flagColValid)    // 删去非 s 列
 
-	// 看起来不能够直接去掉, 应该尝试做映射转换,然后报错
-	// 去掉 type 不符合的列
-	// typeColValid := isValidType(headerGrid[HeaderLineTypeRowIndex]) // 判断列是否有效(至少要包含一个值)
-	// dataGrid = helper.GridFilterColumn(dataGrid, typeColValid)      // 删去type不符合的列
-	// headerGrid = helper.GridFilterColumn(headerGrid, typeColValid)  // 删去type不符合的列
-
 	dataGrid = helper.GridOmitEmptyRow(dataGrid) // 删除空行
 	if len(dataGrid) == 0 {
 		return nil
@@ -71,7 +65,7 @@ func CreateConfigCsv(item *Csv) *ConfigCsv {
 	// type 映射到通用的 type , 找不到匹配的项会报错
 	headerGrid[HeaderLineTypeRowIndex] = fmtTypeName(headerGrid[HeaderLineTypeRowIndex])
 
-	// name 补全,格式化
+	// name 补全, 格式化
 	headerGrid[HeaderLineNameRowIndex] = fillName(headerGrid[HeaderLineNameRowIndex])
 
 	return &ConfigCsv{

@@ -33,8 +33,8 @@ func FileCsvRead(item string) [][]string {
 	return lines
 }
 
-func FileCsvWrite(grid [][]string, csvPath string) {
-	file, err := os.Create(csvPath)
+func FileCsvWrite(csvFilePath string, grid [][]string) {
+	file, err := os.Create(csvFilePath)
 	if err != nil {
 		log.Fatalf("Failed to create file: %v", err)
 	}
