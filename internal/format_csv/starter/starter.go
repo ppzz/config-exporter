@@ -1,9 +1,9 @@
 package starter
 
 import (
-	"github.com/ppzz/golang-csv/internal/format_csv/setting"
-	"github.com/ppzz/golang-csv/internal/helper"
-	"github.com/ppzz/golang-csv/internal/lib/csver"
+	"github.com/ppzz/config-exporter/internal/format_csv/setting"
+	"github.com/ppzz/config-exporter/internal/helper"
+	"github.com/ppzz/config-exporter/internal/lib/csver"
 	"github.com/samber/lo"
 	"path"
 	"regexp"

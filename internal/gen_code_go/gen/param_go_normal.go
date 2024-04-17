@@ -1,8 +1,8 @@
 package gen
 
 import (
-	"github.com/ppzz/golang-csv/internal/helper"
-	"github.com/ppzz/golang-csv/internal/lib/csver"
+	"github.com/ppzz/config-exporter/internal/helper"
+	"github.com/ppzz/config-exporter/internal/lib/csver"
 )
 
 type ParamFieldGoNormal struct {

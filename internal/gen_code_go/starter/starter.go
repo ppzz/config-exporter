@@ -1,10 +1,10 @@
 package starter
 
 import (
-	"github.com/ppzz/golang-csv/internal/gen_code_go/gen"
-	"github.com/ppzz/golang-csv/internal/gen_code_go/setting"
-	"github.com/ppzz/golang-csv/internal/helper"
-	"github.com/ppzz/golang-csv/internal/lib/csver"
+	"github.com/ppzz/config-exporter/internal/gen_code_go/gen"
+	"github.com/ppzz/config-exporter/internal/gen_code_go/setting"
+	"github.com/ppzz/config-exporter/internal/helper"
+	"github.com/ppzz/config-exporter/internal/lib/csver"
 	"github.com/samber/lo"
 	"path"
 )

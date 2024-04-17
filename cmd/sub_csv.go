@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/ppzz/golang-csv/internal/excel_to_csv/setting"
-	"github.com/ppzz/golang-csv/internal/excel_to_csv/starter"
+	"github.com/ppzz/config-exporter/internal/excel_to_csv/setting"
+	"github.com/ppzz/config-exporter/internal/excel_to_csv/starter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

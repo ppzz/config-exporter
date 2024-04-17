@@ -2,7 +2,7 @@ package excel
 
 import (
 	"encoding/csv"
-	"github.com/ppzz/golang-csv/internal/helper"
+	"github.com/ppzz/config-exporter/internal/helper"
 	"github.com/samber/lo"
 	"github.com/tealeg/xlsx"
 	"log"

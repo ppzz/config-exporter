@@ -1,9 +1,9 @@
 package starter
 
 import (
-	"github.com/ppzz/golang-csv/internal/excel_to_csv/setting"
-	"github.com/ppzz/golang-csv/internal/helper"
-	"github.com/ppzz/golang-csv/internal/lib/excel"
+	"github.com/ppzz/config-exporter/internal/excel_to_csv/setting"
+	"github.com/ppzz/config-exporter/internal/helper"
+	"github.com/ppzz/config-exporter/internal/lib/excel"
 	"github.com/samber/lo"
 	"log"
 	"path"

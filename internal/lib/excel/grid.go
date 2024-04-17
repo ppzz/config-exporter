@@ -1,7 +1,7 @@
 package excel
 
 import (
-	"github.com/ppzz/golang-csv/internal/helper"
+	"github.com/ppzz/config-exporter/internal/helper"
 )
 
 // 与 [][]string 相关的操作

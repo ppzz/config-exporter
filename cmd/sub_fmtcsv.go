@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/ppzz/golang-csv/internal/format_csv/setting"
-	"github.com/ppzz/golang-csv/internal/format_csv/starter"
+	"github.com/ppzz/config-exporter/internal/format_csv/setting"
+	"github.com/ppzz/config-exporter/internal/format_csv/starter"
 	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"

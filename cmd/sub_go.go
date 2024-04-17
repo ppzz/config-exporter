@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/ppzz/golang-csv/internal/gen_code_go/setting"
-	"github.com/ppzz/golang-csv/internal/gen_code_go/starter"
+	"github.com/ppzz/config-exporter/internal/gen_code_go/setting"
+	"github.com/ppzz/config-exporter/internal/gen_code_go/starter"
 	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"

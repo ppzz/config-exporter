@@ -1,7 +1,7 @@
 package csver
 
 import (
-	"github.com/ppzz/golang-csv/internal/helper"
+	"github.com/ppzz/config-exporter/internal/helper"
 	"github.com/samber/lo"
 	"strconv"
 	"strings"
