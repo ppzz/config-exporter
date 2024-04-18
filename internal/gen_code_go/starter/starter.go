@@ -21,12 +21,12 @@ func Start() {
 	codeDir := setting.Get().OutputCodeGoDir
 
 	csvFilenameList := helper.ListFilenameByExt(csvDir, ".csv")
-	csvFilenameList = lo.Map(csvFilenameList, func(item string, index int) string {
+	csvFilePathList := lo.Map(csvFilenameList, func(item string, index int) string {
 		return path.Join(csvDir, item)
 	})
 
 	// 读取csv文件, 返回一组 ConfigCsv 对象
-	csvList := lo.Map(csvFilenameList, func(item string, index int) *csver.ConfigCsv {
+	csvList := lo.Map(csvFilePathList, func(item string, index int) *csver.ConfigCsv {
 		grid := helper.FileCsvRead(item)
 		csv := csver.NewCsv(item, grid)
 		return csver.CreateConfigCsv(csv)
@@ -34,7 +34,7 @@ func Start() {
 
 	// 分类,normal, global
 	typ2List := lo.GroupBy(csvList, func(item *csver.ConfigCsv) helper.ConfigTyp {
-		return helper.GetConfType(helper.FileBareName(item.Csv.FilePath))
+		return helper.GetConfType(path.Base(item.Csv.FilePath))
 	})
 
 	normalCsvList := typ2List[helper.ConfigTypNormal] // 普通配置
@@ -58,21 +58,20 @@ func Start() {
 }
 
 func exportGlobalGoFile(codeDir string, csv *csver.ConfigCsv) {
-	bareName := helper.FileBareName(csv.Csv.FilePath)
-	goFilePath := path.Join(codeDir, "a_"+helper.CamelCaseToSnakeCase(bareName)+".autogen.go")
+	bareName := helper.NameBareName(csv.Csv.FilePath)
+	goFilePath := path.Join(codeDir, "a_"+helper.NameToSnakeCase(bareName)+".autogen.go")
 
 	tmpl, err := template.ParseFS(tmplFs, "template/global.tmpl")
 	cobra.CheckErr(err)
 
 	param := gen.CreateParamGoGlobal(csv)
-
 	helper.RenderTemplate(goFilePath, tmpl, param)
 }
 
 // exportNormalGoFile 导出普通的go文件
 func exportNormalGoFile(codeDir string, csv *csver.ConfigCsv) {
-	bareName := helper.FileBareName(csv.Csv.FilePath)
-	goFilePath := path.Join(codeDir, helper.CamelCaseToSnakeCase(bareName)+".autogen.go")
+	bareName := helper.NameBareName(csv.Csv.FilePath)
+	goFilePath := path.Join(codeDir, helper.NameToSnakeCase(bareName)+".autogen.go")
 
 	tmpl, err := template.ParseFS(tmplFs, "template/normal.tmpl")
 	cobra.CheckErr(err)
@@ -83,18 +82,17 @@ func exportNormalGoFile(codeDir string, csv *csver.ConfigCsv) {
 
 func exportNormalIndexGoFile(codeDir string, list []*csver.ConfigCsv) {
 	goFilePath := path.Join(codeDir, "a_index.autogen.go")
-	classNameList := lo.Map(list, func(item *csver.ConfigCsv, index int) string {
-		csvFilePath := item.Csv.FilePath
-		bareName := helper.FileBareName(csvFilePath)
-		snakeCaseName := helper.CamelCaseToSnakeCase(bareName)
-		camelCaseName := helper.SnakeToCamel(snakeCaseName)
-		return helper.UpperFirstLetter(camelCaseName)
-	})
 
 	tmpl, err := template.ParseFS(tmplFs, "template/normal_index.tmpl")
 	cobra.CheckErr(err)
 
+	classNameList := lo.Map(list, func(item *csver.ConfigCsv, index int) string {
+		// 这里的算法需要跟 生成 normal config 文件中的类名保持一致
+		camelCaseName := helper.NameToCamelCase(helper.NameBareName(item.Csv.FilePath))
+		return helper.NameUpperFirstLetter(camelCaseName)
+	})
 	sort.Strings(classNameList)
+
 	param := map[string]any{"List": classNameList}
 	helper.RenderTemplate(goFilePath, tmpl, param)
 }

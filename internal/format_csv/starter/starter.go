@@ -18,11 +18,11 @@ func Start() {
 	csvFilenameList = lo.Filter(csvFilenameList, func(item string, index int) bool {
 		return regexp.MustCompile(csvFilenameSchema).MatchString(item)
 	})
-	csvFilenameList = lo.Map(csvFilenameList, func(item string, index int) string {
+	csvFilePathList := lo.Map(csvFilenameList, func(item string, index int) string {
 		return path.Join(csvDir, item)
 	})
 
-	configCsvList := lo.Map(csvFilenameList, func(item string, index int) *csver.ConfigCsv {
+	configCsvList := lo.Map(csvFilePathList, func(item string, index int) *csver.ConfigCsv {
 		grids := helper.FileCsvRead(item)
 		csv := csver.NewCsv(item, grids)
 		return csver.CreateConfigCsv(csv)
@@ -35,10 +35,9 @@ func Start() {
 
 	helper.DirMustEmpty(fmtDir)
 	helper.MakeSureExist(fmtDir)
+
 	lo.ForEach(configCsvList, func(item *csver.ConfigCsv, index int) {
-		bareName := helper.FileBareName(item.Csv.FilePath)
-		bareName = helper.CamelCaseToSnakeCase(helper.FilenameByType(bareName)) // 需要跟后面 config 文件中记录的 csv 文件名一致
-		fmtCsvFilePath := path.Join(fmtDir, bareName+".csv")
+		fmtCsvFilePath := path.Join(fmtDir, helper.FmtCsvFileNameOfCsvFile(item.Csv.FilePath))
 		helper.FileCsvWrite(fmtCsvFilePath, item.ToGrid())
 	})
 }

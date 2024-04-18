@@ -5,20 +5,20 @@ package config
 
 // {{.CsvMetaVarName}} 保存一些从csv文件读取过来的元信息
 var {{.CsvMetaVarName}} = CsvMeta{
-    Filename:        "{{.CsvFileBareName}}",
-    FilePath:        "{{.CsvFileFullPath}}",
-    DataRowCount:    {{.CsvDataRowCount}},
-    DataColumnCount: {{.CsvDataColumnCount}},
+    Filename:        "{{.CsvFilename}}",      // csv 文件名, 可以根据这个名字去 csv dir 加载 csv 文件
+    FilePath:        "{{.CsvFilePath}}",      // 本文件生成时依赖的csv文件
+    DataRowCount:    {{.CsvDataRowCount}},    // 有效数据的行数
+    DataColumnCount: {{.CsvDataColumnCount}}, // 有效数据的列数
 }
 
-// csv 配置集合，外部可以通过这个实例引用到所有的配置项目
+// All{{.ClassName}} 外部可以通过这个实例引用到所有的配置项目
 var All{{.ClassName}} = &{{.ManagerClassName}}{}
-
-// --- 以下是对 csv 文件中的列的抽象，csv 中的每行可以看作是一个抽象对象
 
 // -----------------------------------------------------------------------------
 
-// {{.ClassName}} {{.CsvFileBareName}}
+// 以下是对 csv 文件中的列的抽象，csv 中的每行可以看作是一个抽象对象
+
+// {{.ClassName}} {{.CsvFilename}}
 type {{.ClassName}} struct {
 {{- range .Fields}}
     {{.GoFieldName}} {{.ColTyp}} `column:"{{.ColName}}"` // {{.ColIndex}} {{.ColDesc}}
@@ -31,7 +31,7 @@ func (a {{.ClassName}}) ID() int {
 
 // -----------------------------------------------------------------------------
 
-// --- 以下对象代表一组csv配置的集合，
+// 以下对象代表一组csv配置的集合，
 
 type {{.ManagerClassName}} struct {
     CfgBase[{{.ClassName}}]

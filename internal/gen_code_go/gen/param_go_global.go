@@ -4,6 +4,7 @@ import (
 	"github.com/ppzz/config-exporter/internal/helper"
 	"github.com/ppzz/config-exporter/internal/lib/csver"
 	"github.com/samber/lo"
+	"path"
 )
 
 type ParamFieldGoGlobal struct {
@@ -20,8 +21,8 @@ type ParamFieldGoGlobal struct {
 }
 
 type ParamGoGlobal struct {
-	CsvFileBareName    string
-	CsvFileFullPath    string
+	CsvFilename        string
+	CsvFilePath        string
 	CsvDataRowCount    int
 	CsvDataColumnCount int
 
@@ -32,13 +33,11 @@ type ParamGoGlobal struct {
 
 func CreateParamGoGlobal(csv *csver.ConfigCsv) *ParamGoGlobal {
 	csvFilePath := csv.Csv.FilePath
-	bareName := helper.FileBareName(csvFilePath)
-	snakeCaseName := helper.CamelCaseToSnakeCase(bareName)
-	camelCaseName := helper.SnakeToCamel(snakeCaseName)
+	camelCaseName := helper.NameToCamelCase(helper.NameBareName(csvFilePath))
 
 	param := &ParamGoGlobal{
-		CsvFileBareName:    bareName,
-		CsvFileFullPath:    csvFilePath,
+		CsvFilename:        path.Base(csvFilePath),
+		CsvFilePath:        csvFilePath,
 		CsvDataRowCount:    len(csv.Grid),
 		CsvDataColumnCount: len(csv.Grid[0]),
 		CsvMetaVarName:     camelCaseName + "CsvMeta",
@@ -59,7 +58,7 @@ func CreateParamGoGlobal(csv *csver.ConfigCsv) *ParamGoGlobal {
 			OriginalType:  typ,
 			OriginalVal:   val,
 			OriginalDesc:  desc,
-			VariableName:  "Global" + helper.UpperFirstLetter(name),
+			VariableName:  "Global" + helper.NameUpperFirstLetter(name),
 			VariableType:  variableType,
 			VariableValue: helper.GetVariableLiteralValue(variableType, val),
 		}

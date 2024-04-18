@@ -30,7 +30,7 @@ func (t ConfigTyp) String() string {
 	}
 }
 
-var TypGlobalNameMatcher = regexp.MustCompile("^global$")      // global
+var TypGlobalNameMatcher = regexp.MustCompile("^[gG]lobal.*$") // global
 var TypI18nNameMatcher = regexp.MustCompile(`^i18n.*$`)        // i18n表
 var TypNormalNameMatcher = regexp.MustCompile("^[a-z0-9]+.*$") // 普通表
 
@@ -74,22 +74,27 @@ func FilenameByType(bareName string) string {
 	}
 }
 
-// CamelCaseToSnakeCase 把驼峰转为蛇形命名
-func CamelCaseToSnakeCase(s string) string {
-	s = regexp.MustCompile(`\p{Han}`).ReplaceAllString(s, "") // 去掉中文
+func NameRemoveHan(s string) string {
+	return regexp.MustCompile(`\p{Han}`).ReplaceAllString(s, "") // 去掉中文
+}
+
+// NameToSnakeCase converts CamelCase to snake_case, avoiding consecutive underscores.
+func NameToSnakeCase(s string) string {
 	var result []rune
 	for i, r := range s {
-		if unicode.IsUpper(r) && i > 0 {
-			result = append(result, '_')
+		if unicode.IsUpper(r) {
+			if i > 0 && result[len(result)-1] != '_' {
+				result = append(result, '_')
+			}
+			r = unicode.ToLower(r)
 		}
-		result = append(result, unicode.ToLower(r))
+		result = append(result, r)
 	}
 	return string(result)
 }
 
-// SnakeToCamel converts snake_case strings to camelCase.
-func SnakeToCamel(s string) string {
-	s = regexp.MustCompile(`\p{Han}`).ReplaceAllString(s, "") // 去掉中文
+// NameToCamelCase converts snake_case strings to camelCase.
+func NameToCamelCase(s string) string {
 	s = strings.ToLower(s)
 
 	words := strings.Split(s, "_")
@@ -103,7 +108,7 @@ func SnakeToCamel(s string) string {
 	return strings.Join(words, "")
 }
 
-func UpperFirstLetter(name string) string {
+func NameUpperFirstLetter(name string) string {
 	inputRunes := []rune(name) // 将字符串转换为 Rune 数组
 
 	// 如果字符串非空且首字母是大写字母，则将首字母转换为小写字母

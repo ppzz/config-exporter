@@ -3,6 +3,7 @@ package gen
 import (
 	"github.com/ppzz/config-exporter/internal/helper"
 	"github.com/ppzz/config-exporter/internal/lib/csver"
+	"path"
 )
 
 type ParamFieldGoNormal struct {
@@ -14,8 +15,8 @@ type ParamFieldGoNormal struct {
 }
 
 type ParamGoNormal struct {
-	CsvFileBareName    string
-	CsvFileFullPath    string
+	CsvFilename        string
+	CsvFilePath        string
 	CsvDataRowCount    int
 	CsvDataColumnCount int
 
@@ -28,15 +29,12 @@ type ParamGoNormal struct {
 
 func CrateParamGoNormal(csv *csver.ConfigCsv) *ParamGoNormal {
 	csvFilePath := csv.Csv.FilePath
-	bareName := helper.FileBareName(csvFilePath)
-	snakeCaseName := helper.CamelCaseToSnakeCase(bareName)
-	camelCaseName := helper.SnakeToCamel(snakeCaseName)
-	className := helper.UpperFirstLetter(camelCaseName)
+	camelCaseName := helper.NameToCamelCase(helper.NameBareName(csvFilePath))
+	className := helper.NameUpperFirstLetter(camelCaseName) // 这里的 需要跟外部生成 index config 文件的类名保持一致
 
-	csvFileBareName := helper.CamelCaseToSnakeCase(helper.FilenameByType(bareName)) // 需要跟 fmtcsv 输出的文件名保持一致
 	param := &ParamGoNormal{
-		CsvFileBareName:    csvFileBareName + ".csv",
-		CsvFileFullPath:    csvFilePath,
+		CsvFilename:        path.Base(csvFilePath),
+		CsvFilePath:        csvFilePath,
 		CsvDataRowCount:    len(csv.Grid),
 		CsvDataColumnCount: len(csv.Grid[0]),
 		CsvMetaVarName:     camelCaseName + "CsvMeta",
@@ -51,7 +49,7 @@ func CrateParamGoNormal(csv *csver.ConfigCsv) *ParamGoNormal {
 			ColName:     cell,
 			ColDesc:     csv.HeaderLineDesc[i],
 			ColTyp:      csv.HeaderLineType[i],
-			GoFieldName: helper.UpperFirstLetter(cell),
+			GoFieldName: helper.NameUpperFirstLetter(cell),
 		})
 	}
 

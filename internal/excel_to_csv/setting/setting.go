@@ -19,6 +19,8 @@ func Get() *Setting {
 type Setting struct {
 	InputExcelDir string `validate:"required"` // 输入的 Excel 文件夹
 	OutputCsvDir  string `validate:"required"` // 输出的 Csv 文件夹
+
+	ExcelFileNameSchema string `validate:"required"` // csv 文件名的正则表达式
 }
 
 func NewSetting() *Setting {
@@ -35,6 +37,9 @@ func (s *Setting) Init() {
 }
 
 func (s *Setting) SetAttribute(v *viper.Viper) {
+	v.SetDefault("excel_filename_schema", `^[a-zA-Z].*$`)
+
 	s.InputExcelDir = v.GetString("excel")
 	s.OutputCsvDir = v.GetString("csv")
+	s.ExcelFileNameSchema = v.GetString("excel_filename_schema")
 }

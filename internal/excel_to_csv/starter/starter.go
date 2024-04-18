@@ -7,42 +7,40 @@ import (
 	"github.com/samber/lo"
 	"log"
 	"path"
+	"regexp"
 )
 
 func Start() {
 	excelDir := setting.Get().InputExcelDir
 	csvDir := setting.Get().OutputCsvDir
+	excelFilenameSchema := setting.Get().ExcelFileNameSchema
 
-	emptyDir := helper.IsEmptyDir(csvDir)
-	if !emptyDir {
-		log.Fatal("output dir is not empty")
-	}
+	helper.DirMustEmpty(csvDir)
 
-	filenames := getExcelNames(excelDir)
+	excelFilename := helper.ListFilenameByExt(excelDir, []string{".xlsx", ".xls"}...)
+
+	excelFilename = lo.Filter(excelFilename, func(item string, index int) bool {
+		return regexp.MustCompile(excelFilenameSchema).MatchString(item)
+	})
+
+	excelFilePath := lo.Map(excelFilename, func(item string, index int) string {
+		return path.Join(excelDir, item)
+	})
 
 	h := excel.NewExcelHandler()
 
-	excelList := lo.Map(filenames, func(item string, index int) *excel.Excel {
+	excelList := lo.Map(excelFilePath, func(item string, index int) *excel.Excel {
 		ex, err := h.ReadOne(item)
 		if err != nil {
-			log.Fatal("read excel file failed: ", item, err.Error())
+			log.Fatal("read excel file failed: ", item, " ", err.Error())
 		}
 		return ex
 	})
 
-	helper.DirMustEmpty(csvDir)
 	helper.MakeSureExist(csvDir)
 
 	// 导出csv
 	for _, item := range excelList {
 		h.ExportToCsv(csvDir, item)
 	}
-}
-
-// getExcelNames 返回 dir 下的 excel 文件名列表
-func getExcelNames(dir string) []string {
-	list := helper.ListFilenameByExt(dir, setting.ConstExcelExtNames...)
-	return lo.Map(list, func(item string, index int) string {
-		return path.Join(dir, item)
-	})
 }
