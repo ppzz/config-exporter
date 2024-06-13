@@ -2,6 +2,7 @@ package helper
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/samber/lo"
 	"log"
 	"strings"
@@ -79,7 +80,7 @@ func GetVariableLiteralValue(typ string, val string) string {
 	case TypeIArr:
 		return GoLiteralValIntArr(val)
 	case TypeIArr2d:
-		return "NOT IMPLEMENT"
+		return GoLiteralValIntArr2d(val)
 	case TypeStr:
 		return GoLiteralValStr(val)
 	case TypeStrArr:
@@ -99,6 +100,30 @@ func GoLiteralValIntArr(val string) string {
 
 	b := bytes.Buffer{}
 	err = tmpl.Execute(&b, strings.ReplaceAll(val, "#", ", "))
+	if err != nil {
+		return ""
+	}
+	return b.String()
+}
+
+func GoLiteralValIntArr2d(val string) string {
+	tmp := `[][]int{ {{- . -}} }`
+	tmpl, err := template.New("").Parse(tmp)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	list := lo.FilterMap(strings.Split(val, "|"), func(item string, index int) (string, bool) {
+		trimmed := strings.TrimSpace(item)
+		temp := fmt.Sprintf("{%s}", strings.ReplaceAll(trimmed, "#", ","))
+		return temp, len(trimmed) > 0
+	})
+	if len(list) == 0 {
+		return "[][]int"
+	}
+
+	b := bytes.Buffer{}
+	err = tmpl.Execute(&b, strings.Join(list, ","))
 	if err != nil {
 		return ""
 	}
