@@ -3,6 +3,8 @@ package config
 // Important: 此文件为自动生成的代码，请不要提交
 // Important: 本文件用户映射配置文件csv的字段，仅用与csv的数据持有对象
 
+import "github.com/samber/lo"
+
 // {{.CsvMetaVarName}} 保存一些从csv文件读取过来的元信息
 var {{.CsvMetaVarName}} = CsvMeta{
     Filename:        "{{.CsvFilename}}",      // csv 文件名, 可以根据这个名字去 csv dir 加载 csv 文件
@@ -52,4 +54,16 @@ func (a *{{.ManagerClassName}}) GetMetadata() CsvMeta {
 
 func (a *{{.ManagerClassName}}) GetAll() []{{.ClassName}} {
     return a.CfgBase.All()
+}
+
+func (a *{{.ManagerClassName}}) IsValidId(ids ...int) bool {
+    return lo.EveryBy(ids, func(item int) bool {
+        return a.Has(item)
+    })
+}
+
+func (a *{{.ManagerClassName}}) FilterValidIds(ids []int) []int {
+    return lo.Filter(ids, func(item int, index int) bool {
+        return a.Has(item)
+    })
 }
