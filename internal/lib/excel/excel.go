@@ -1,10 +1,12 @@
 package excel
 
 import (
-	"github.com/ppzz/config-exporter/internal/helper"
+	"strings"
+
 	"github.com/samber/lo"
 	"github.com/tealeg/xlsx"
-	"strings"
+
+	"github.com/ppzz/config-exporter/internal/helper"
 )
 
 type Excel struct {
@@ -38,13 +40,17 @@ func NewSheet(sheetIndex int, sheet *xlsx.Sheet) *Sheet {
 	tempGrid = helper.GridFillColumn(tempGrid, sheet.MaxCol) // 填充列
 	tempGrid = RemoveEmptyCol(tempGrid)                      // 删除空行
 
+	colCount := 0
+	if len(tempGrid) > 0 {
+		colCount = len(tempGrid[0])
+	}
 	return &Sheet{
 		Index:          sheetIndex,
 		Name:           sheet.Name,
 		OriginalMaxRow: sheet.MaxRow,
 		OriginalMaxCol: sheet.MaxCol,
 		RowCount:       len(tempGrid),
-		ColCount:       len(tempGrid[0]),
+		ColCount:       colCount,
 		Grid:           tempGrid,
 	}
 }
